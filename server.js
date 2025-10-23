@@ -35,7 +35,7 @@ app.post("login", (req, res) => {
 });
 
 // === TRANSAKSI ===
-app.post("/api/transactions", (req, res) => {
+app.post("transactions", (req, res) => {
   const { game, packageName, price, userId, zoneId } = req.body;
   if (!game || !packageName || !price || !userId)
     return res.status(400).json({ message: "Data tidak lengkap" });
@@ -60,7 +60,7 @@ app.post("/api/transactions", (req, res) => {
   res.json({ success: true, message: "Transaksi tersimpan", data: newTx });
 });
 
-app.get("/api/transactions", (req, res) => {
+app.get("transactions", (req, res) => {
   const transactions = JSON.parse(fs.readFileSync(dataFile));
   res.json(transactions);
 });
@@ -82,11 +82,11 @@ const prices = {
   ],
 };
 
-app.get("/api/prices", (req, res) => {
+app.get("prices", (req, res) => {
   res.json(prices); // `prices` adalah objek yang menyimpan data harga terbaru
 });
 
-app.post("/api/update-price", (req, res) => {
+app.post("update-price", (req, res) => {
   const { game, packageId, newPrice } = req.body;
   const gamePackages = prices[game];
   if (!gamePackages) return res.status(404).send("Game not found");
@@ -127,4 +127,5 @@ app.listen(PORT, HOST, () => {
 - PC: http://localhost:${PORT}
 - HP (Wi-Fi sama): http://${ip}:${PORT}`);
 });
+
 
