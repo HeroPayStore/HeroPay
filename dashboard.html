@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Riwayat Pembelian - Sibedar</title>
+    <link rel="icon" href="image/favicon.ico" type="image/x-icon" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap");
+
+      body {
+        margin: 0;
+        font-family: "Nunito", sans-serif;
+        background: #f4f4f4;
+      }
+      h1 {
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
+        color: rgba(0, 0, 0, 0.62);
+        font-size: 2.5rem;
+      }
+
+      /* Navbar */
+      .top-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        padding: 10px 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+      }
+      .top-nav .logo {
+        font-weight: bold;
+        font-size: 1.2em;
+        color: #bf092f;
+      }
+      .top-nav .menu-toggle {
+        font-size: 1.5em;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      .top-nav button.logout {
+        background: #cfcfcf;
+        border: none;
+        color: rgb(45, 45, 45);
+        padding: 4px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 10px;
+      }
+      .top-nav button.logout:hover {
+        background: #c0392b;
+        color: white;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 220px;
+        background: #222831;
+        color: white;
+        padding-top: 20px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1001;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+        margin-top: 50px;
+      }
+      .sidebar.visible {
+        transform: translateX(0);
+      }
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 11px;
+      }
+      .sidebar ul li {
+        padding: 15px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: 0.3s;
+      }
+      .sidebar ul li:hover {
+        background: #06367d;
+        border-radius: 10px;
+      }
+
+      /* Overlay */
+      .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+      .overlay.active {
+        display: block;
+      }
+
+      /* Main content */
+      .main-content {
+        padding: 20px;
+        margin-top: 10px;
+        transition: margin-left 0.3s ease;
+      }
+      .main-content h1 {
+        margin-top: 10px;
+        font-weight: 600;
+        color: #222831b6;
+      }
+      /* Table */
+      .table-wrapper {
+        overflow-x: auto;
+        margin-top: 20px;
+      }
+      .table-wrapper button {
+        padding: 5px 10px;
+        font-size: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      th {
+        background: #fff;
+        color: #3a3a3a;
+        border-bottom: 2px solid #bf092f;
+      }
+      tr:nth-child(even) {
+        background: #fafafa;
+      }
+
+      /* Button Clear */
+      #clearHistory {
+        margin: 10px 0;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        background-color: #bf092f;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      #clearHistory:hover {
+        background-color: #a00828;
+      }
+
+      /* Desktop */
+      @media (min-width: 769px) {
+        .sidebar {
+          transform: translateX(0);
+        }
+        .main-content {
+          margin-left: 220px;
+        }
+        .top-nav .menu-toggle {
+          display: none;
+        }
+        .overlay {
+          display: none;
+        }
+      }
+      /* Mobile */
+      @media (max-width: 768px) {
+        .main-content {
+          margin-left: 0;
+          padding: 15px;
+        }
+        table th,
+        table td {
+          font-size: 11px;
+        }
+      }
+      @media (max-width: 596px) {
+        h1 {
+          margin-left: 40px;
+        }
+        .logo {
+          display: none;
+        }
+        .sidebar {
+          margin-top: 50px;
+        }
+        .table-wrapper button {
+          font-size: 8px;
+          padding: 7px 10px;
+        }
+        .main-content h1 {
+          font-size: 20px;
+          display: flex;
+          justify-content: flex-start;
+          margin-top: 10px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="top-nav">
+      <button
+        class="menu-toggle"
+        onclick="toggleSidebar()"
+        title="Toggle sidebar"
+        aria-label="Toggle sidebar"
+      >
+        <i class="fas fa-bars" aria-hidden="true"></i>
+        <span class="visually-hidden">Toggle sidebar</span>
+      </button>
+      <div class="logo">Admin</div>
+      <button class="logout" id="logoutBtn" title="Logout" aria-label="Logout">
+        <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+        <span class="visually-hidden">Logout</span>
+      </button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+      <ul>
+        <li onclick="location.href='dashboard.html'">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </li>
+        <li onclick="location.href='riwayat.html'">
+          <i class="fas fa-history"></i> Riwayat
+        </li>
+      </ul>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="main-content">
+      <h1>Selamat datang kembali admin!!</h1>
+      <div class="card p-4 mt-4 shadow-sm">
+        <h2 class="mb-4">Edit Harga Katalog</h2>
+        <form id="editPriceForm">
+          <div class="mb-3">
+            <label for="gameSelect" class="form-label">Pilih Game</label>
+            <select id="gameSelect" class="form-select">
+              <option value="Mobile Legends">Mobile Legends</option>
+              <option value="Roblox">Roblox</option>
+              <option value="Free Fire">Free Fire</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="packageSelect" class="form-label">Pilih Paket</label>
+            <select id="packageSelect" class="form-select"></select>
+          </div>
+          <div class="mb-3">
+            <label for="newPrice" class="form-label">Harga Baru</label>
+            <input
+              type="number"
+              id="newPrice"
+              class="form-control"
+              placeholder="Masukkan harga baru"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Update Harga</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      const packages = {
+        "Mobile Legends": [
+          { id: "ml-3", label: "3 Diamonds" },
+          { id: "ml-5", label: "5 Diamonds" },
+          { id: "ml-12", label: "12 Diamonds" },
+          { id: "ml-19", label: "19 Diamonds" },
+          { id: "ml-28", label: "28 Diamonds" },
+          { id: "ml-44", label: "44 Diamonds" },
+          { id: "ml-59", label: "59 Diamonds" },
+          { id: "ml-85", label: "85 Diamonds" },
+          { id: "ml-170", label: "170 Diamonds" },
+          { id: "ml-240", label: "240 Diamonds" },
+          { id: "ml-296", label: "296 Diamonds" },
+          { id: "ml-408", label: "408 Diamonds" },
+          { id: "ml-568", label: "568 Diamonds" },
+        ],
+        Roblox: [
+          { id: "rb-40", label: "40 Robux" },
+          { id: "rb-100", label: "100 Robux" },
+          { id: "rb-400", label: "400 Robux" },
+          { id: "rb-800", label: "800 Robux" },
+        ],
+        "Free Fire": [
+          { id: "mc-260", label: "260 Minecoins" },
+          { id: "mc-520", label: "520 Minecoins" },
+          { id: "mc-1200", label: "1200 Minecoins" },
+        ],
+      };
+
+      const gameSelect = document.getElementById("gameSelect");
+      const packageSelect = document.getElementById("packageSelect");
+
+      gameSelect.addEventListener("change", () => {
+        const selectedGame = gameSelect.value;
+        packageSelect.innerHTML = "";
+        packages[selectedGame].forEach((pkg) => {
+          const option = document.createElement("option");
+          option.value = pkg.id;
+          option.textContent = pkg.label;
+          packageSelect.appendChild(option);
+        });
+      });
+
+      gameSelect.dispatchEvent(new Event("change"));
+
+      document
+        .getElementById("editPriceForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const game = document.getElementById("gameSelect").value;
+          const packageId = document.getElementById("packageSelect").value;
+          const newPrice = document.getElementById("newPrice").value;
+
+          if (!newPrice) {
+            alert("Harga baru harus diisi!");
+            return;
+          }
+
+          try {
+            const response = await fetch("http://localhost:3000/api/update-price", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ game, packageId, newPrice }),
+            });
+
+            if (response.ok) {
+              alert("Harga berhasil diperbarui!");
+            } else {
+              alert("Gagal memperbarui harga.");
+            }
+          } catch (err) {
+            console.error("Gagal memperbarui harga:", err);
+            alert("Terjadi kesalahan saat memperbarui harga.");
+          }
+        });
+
+      // Sidebar toggle
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("visible");
+        document.getElementById("overlay").classList.toggle("active");
+      }
+
+      // SweetAlert Logout
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        Swal.fire({
+          title: "Logout?",
+          text: "Apakah Anda yakin ingin keluar?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Ya, logout",
+          cancelButtonText: "Batal",
+          confirmButtonColor: "#0d6efd",
+          cancelButtonColor: "#dc3545",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            localStorage.clear();
+            Swal.fire({
+              toast: true,
+              position: "top-end",
+              icon: "success",
+              title: "Berhasil logout!",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            setTimeout(() => {
+              location.href = "index.html";
+            }, 1600);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

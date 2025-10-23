@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Riwayat Pembelian - Sibedar</title>
+    <link rel="icon" href="image/favicon.ico" type="image/x-icon" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap");
+
+      body {
+        margin: 0;
+        font-family: "Nunito", sans-serif;
+        background: #f4f4f4;
+      }
+      h1 {
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
+        color: rgba(0, 0, 0, 0.62);
+        font-size: 2.5rem;
+      }
+
+      /* Navbar */
+      .top-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        padding: 10px 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+      }
+      .top-nav .logo {
+        font-weight: bold;
+        font-size: 1.2em;
+        color: #bf092f;
+      }
+      .top-nav .menu-toggle {
+        font-size: 1.5em;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      .top-nav button.logout {
+        background: #cfcfcf;
+        border: none;
+        color: rgb(45, 45, 45);
+        padding: 4px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 10px;
+      }
+      .top-nav button.logout:hover {
+        background: #c0392b;
+        color: white;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 220px;
+        background: #222831;
+        color: white;
+        padding-top: 20px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1001;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+        margin-top: 50px;
+      }
+      .sidebar.visible {
+        transform: translateX(0);
+      }
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 11px;
+      }
+      .sidebar ul li {
+        padding: 15px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: 0.3s;
+      }
+      .sidebar ul li:hover {
+        background: #06367d;
+        border-radius: 10px;
+      }
+
+      /* Overlay */
+      .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+      .overlay.active {
+        display: block;
+      }
+
+      /* Main content */
+      .main-content {
+        padding: 20px;
+        margin-top: 10px;
+        transition: margin-left 0.3s ease;
+      }
+      .main-content h1 {
+        margin-top: 10px;
+        font-weight: 600;
+        color: #222831b6;
+      }
+      /* Table */
+      .table-wrapper {
+        overflow-x: auto;
+        margin-top: 20px;
+      }
+      .table-wrapper button {
+        padding: 5px 10px;
+        font-size: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      th {
+        background: #fff;
+        color: #3a3a3a;
+        border-bottom: 2px solid #bf092f;
+      }
+      tr:nth-child(even) {
+        background: #fafafa;
+      }
+
+      /* Button Clear */
+      #clearHistory {
+        margin: 10px 0;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        background-color: #bf092f;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      #clearHistory:hover {
+        background-color: #a00828;
+      }
+
+      /* Desktop */
+      @media (min-width: 769px) {
+        .sidebar {
+          transform: translateX(0);
+        }
+        .main-content {
+          margin-left: 220px;
+        }
+        .top-nav .menu-toggle {
+          display: none;
+        }
+        .overlay {
+          display: none;
+        }
+      }
+      /* Mobile */
+      @media (max-width: 768px) {
+        .main-content {
+          margin-left: 0;
+          padding: 15px;
+        }
+        table th,
+        table td {
+          font-size: 11px;
+        }
+      }
+      @media (max-width: 596px) {
+        .logo {
+          display: none;
+        }
+        .sidebar {
+          margin-top: 50px;
+        }
+        .table-wrapper button {
+          font-size: 8px;
+          padding: 7px 10px;
+        }
+        .main-content h1 {
+          font-size: 20px;
+          display: flex;
+          justify-content: flex-start;
+          margin-top: 10px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="top-nav">
+      <button
+        class="menu-toggle"
+        onclick="toggleSidebar()"
+        title="Toggle sidebar"
+        aria-label="Toggle sidebar"
+      >
+        <i class="fas fa-bars" aria-hidden="true"></i>
+        <span class="visually-hidden">Toggle sidebar</span>
+      </button>
+      <div class="logo">Admin</div>
+      <button class="logout" id="logoutBtn" title="Logout" aria-label="Logout">
+        <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+        <span class="visually-hidden">Logout</span>
+      </button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+      <ul>
+        <li onclick="location.href='dashboard.html'">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </li>
+        <li onclick="location.href='riwayat.html'">
+          <i class="fas fa-history"></i> Riwayat
+        </li>
+      </ul>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="main-content">
+      <h1>Riwayat Pembelian</h1>
+      <div class="table-wrapper">
+        <button id="clearHistory">
+          <i class="fa-solid fa-trash"></i> Hapus
+        </button>
+        <table id="table">
+          <thead>
+            <tr>
+              <th>Tanggal & Waktu</th>
+              <th>Nama Game</th>
+              <th>Paket</th>
+              <th>Harga</th>
+              <th>User ID</th>
+              <th>Zone ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="6">Memuat data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      // Sidebar toggle
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("visible");
+        document.getElementById("overlay").classList.toggle("active");
+      }
+
+      // Fetch data transaksi
+      fetch("/api/transactions")
+        .then((res) => res.json())
+        .then((data) => {
+          const tbody = document.querySelector("#table tbody");
+          tbody.innerHTML = "";
+          if (data.length === 0) {
+            tbody.innerHTML =
+              "<tr><td colspan='6'>Belum ada transaksi.</td></tr>";
+          } else {
+            data.forEach((tx) => {
+              const tr = document.createElement("tr");
+              tr.innerHTML = `<td>${tx.time}</td><td>${tx.game}</td><td>${
+                tx.packageName
+              }</td><td>${tx.price}</td><td>${tx.userId}</td><td>${
+                tx.zoneId || "-"
+              }</td>`;
+              tbody.appendChild(tr);
+            });
+          }
+        })
+        .catch(() => {
+          document.querySelector("#table tbody").innerHTML =
+            "<tr><td colspan='6'>Gagal mengambil data.</td></tr>";
+        });
+
+      // SweetAlert Hapus Histori
+      document.getElementById("clearHistory").addEventListener("click", () => {
+        const swalButtons = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-primary me-2",
+            cancelButton: "btn btn-danger",
+          },
+          buttonsStyling: false,
+        });
+
+        swalButtons
+          .fire({
+            title: "Yakin hapus histori?",
+            text: "Data transaksi akan hilang!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Ya, hapus!",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+            padding: "1.5em", // jarak di popup
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              document.querySelector("#table tbody").innerHTML =
+                "<tr><td colspan='6'>Belum ada transaksi.</td></tr>";
+
+              Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "Histori berhasil dihapus!",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+              });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+              Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "info",
+                title: "Dibatalkan",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+              });
+            }
+          });
+      });
+
+      // SweetAlert Logout
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        Swal.fire({
+          title: "Logout?",
+          text: "Apakah Anda yakin ingin keluar?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Ya, logout",
+          cancelButtonText: "Batal",
+          confirmButtonColor: "#0d6efd",
+          cancelButtonColor: "#dc3545",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            localStorage.clear();
+            Swal.fire({
+              toast: true,
+              position: "top-end",
+              icon: "success",
+              title: "Berhasil logout!",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            setTimeout(() => {
+              location.href = "index.html";
+            }, 1600);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

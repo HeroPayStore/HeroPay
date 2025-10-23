@@ -1,0 +1,55 @@
+/* public/styles.css - theme HeroPay */
+
+:root {
+  --primary: #bf092f;
+  --dark: #222222;
+  --light: #f9f9f9;
+  --muted: #888;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: var(--light);
+  margin: 0;
+  color: var(--dark);
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+.action-btn {
+  background: var(--primary);
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.action-btn:hover {
+  background: #9f0726;
+}
+.logo {
+  background: var(--primary);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.small {
+  font-size: 13px;
+  color: var(--muted);
+}
