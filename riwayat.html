@@ -296,7 +296,7 @@
       }
 
       // Fetch data transaksi
-      fetch("/api/transactions")
+      fetch("transactions")
         .then((res) => res.json())
         .then((data) => {
           const tbody = document.querySelector("#table tbody");
@@ -401,3 +401,4 @@
     </script>
   </body>
 </html>
+
