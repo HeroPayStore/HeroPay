@@ -28,11 +28,11 @@ app.post("/api/login", (req, res) => {
   });
 });
 
-app.get("/api/user", (req, res) => {
+app.get("user", (req, res) => {
   res.json(users.map((u) => ({ email: u.email, name: u.name })));
 });
 
-app.get("/api/transactions", (req, res) => {
+app.get("transactions", (req, res) => {
   fs.readFile(transactionsPath, "utf8", (err, data) => {
     if (err) return res.status(500).json({ error: "Gagal membaca data" });
     let txs = [];
@@ -45,7 +45,7 @@ app.get("/api/transactions", (req, res) => {
   });
 });
 
-app.delete("/api/transactions", (req, res) => {
+app.delete("transactions", (req, res) => {
   fs.writeFile(transactionsPath, "[]", "utf8", (err) => {
     if (err) return res.status(500).json({ error: "Gagal menghapus data" });
     res.json({ success: true });
@@ -53,3 +53,4 @@ app.delete("/api/transactions", (req, res) => {
 });
 
 app.listen(3000, () => console.log("✅ API berjalan di http://localhost:3000"));
+
